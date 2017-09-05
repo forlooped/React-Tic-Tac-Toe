@@ -32,60 +32,81 @@ export default class App extends Component {
 
   updateBoard(loc, player) {
     console.log(this.state.winner, this.state.turn, this.state.gameBoard);
+    if(this.state.winner !== null) {
+      // make game over Component visible. And more importantly, when there's an winner, the return() makes sure, we are not able to play further.
+      console.log("Winner", this.state.winner);
+      return;
+    }
 
     // If a tile already contains an 'x' or an 'o' then we should return. Here "loc" is the index no of the array of the gameBoard
     if(this.state.gameBoard[loc] === 'x' || this.state.gameBoard[loc] === 'o') {
       return; // invalid move
     }
-     // Winner logic - The Game assumes that for given symbol, it is considered a winner, if three “instances” of that symbol occupy a row, a column, or one of two slants.  For a player, say 'x', there are 8 ways to win and each corresponds to 3 'x' in a row/column/diagonal.
-    let topRow = this.state.gameBoard[0] + this.state.gameBoard[1] + this.state.gameBoard[2];
-    if(topRow.match(/xxx|ooo/)) {
-      this.setState({winner: this.state.turn});
-      return;
-    }
-    let middleRow = this.state.gameBoard[3] + this.state.gameBoard[4] + this.state.gameBoard[5];
-    if(middleRow.match(/xxx|ooo/)) {
-      this.setState({winner: this.state.turn});
-      return;
-    }
-    let bottomRow = this.state.gameBoard[6] + this.state.gameBoard[7] + this.state.gameBoard[8];
-    if(bottomRow.match(/xxx|ooo/)) {
-      this.setState({winner: this.state.turn});
-      return;
-    }
-    let leftCol = this.state.gameBoard[0] + this.state.gameBoard[3] + this.state.gameBoard[6];
-    if(leftCol.match(/xxx|ooo/)) {
-      this.setState({winner: this.state.turn});
-      return;
-    }
 
-    let middleCol = this.state.gameBoard[1] + this.state.gameBoard[4] + this.state.gameBoard[7];
-    if(middleCol.match(/xxx|ooo/)) {
-      this.setState({winner: this.state.turn});
-      return;
-    }
-
-    let rightCol = this.state.gameBoard[2] + this.state.gameBoard[5] + this.state.gameBoard[8];
-    if(rightCol.match(/xxx|ooo/)) {
-      this.setState({winner: this.state.turn});
-      return;
-    }
-
-    let leftDiag = this.state.gameBoard[0] + this.state.gameBoard[4] + this.state.gameBoard[8];
-    if(leftDiag.match(/xxx|ooo/)) {
-      this.setState({winner: this.state.turn});
-      return;
-    }
-
-    let rightDiag = this.state.gameBoard[2] + this.state.gameBoard[4] + this.state.gameBoard[6];
-    if(bottomRow.match(/xxx|ooo/)) {
-      this.setState({winner: this.state.turn});
-      return;
-    }
+    let currentGameBoard = this.state.gameBoard;
+    currentGameBoard.splice(loc, 1, this.state.turn);
+    //The above .splice() method removes one item at loc-index (i.e. at the location that was clicked) position and inserts this.state.turn at loc-index position. But in here, I can understand it as just insering 1 element, which is, this.state.turn at the loc-index position. So, basically I am just splicing in a player's move at loc-index.
 
 
+      this.setState({gameBoard: currentGameBoard}, function(){
+      let moves = this.state.gameBoard.join('').replace(/ /g, '');
+      // We are joining all the elements of the array with no delimiters (so just back to back to back), and then replace any empty space with nothing (the single quotes with no space in between). What this gives is then - the length of moves will become the no of plays that has been played so far.
+      console.log('Moves:', moves, 'Winner:', this.state.winner);
+      if(moves.length === 9) {
+        this.setState({winner: 'd'});
+        // i.e. if all the tiles are filled its a draw. Make the game over component visible.
+        return;
+      } else {
+        // Now implement Winner logic - The Game assumes that for given symbol, it is considered a winner, if three “instances” of that symbol occupy a row, a column, or one of two slants.  For a player, say 'x', there are 8 ways to win and each corresponds to 3 'x' in a row/column/diagonal.
+       let topRow = this.state.gameBoard[0] + this.state.gameBoard[1] + this.state.gameBoard[2];
+       if(topRow.match(/xxx|ooo/)) {
+         this.setState({winner: this.state.turn});
+         return;
+       }
+       let middleRow = this.state.gameBoard[3] + this.state.gameBoard[4] + this.state.gameBoard[5];
+       if(middleRow.match(/xxx|ooo/)) {
+         this.setState({winner: this.state.turn});
+         return;
+       }
+       let bottomRow = this.state.gameBoard[6] + this.state.gameBoard[7] + this.state.gameBoard[8];
+       if(bottomRow.match(/xxx|ooo/)) {
+         this.setState({winner: this.state.turn});
+         return;
+       }
+       let leftCol = this.state.gameBoard[0] + this.state.gameBoard[3] + this.state.gameBoard[6];
+       if(leftCol.match(/xxx|ooo/)) {
+         this.setState({winner: this.state.turn});
+         return;
+       }
+
+       let middleCol = this.state.gameBoard[1] + this.state.gameBoard[4] + this.state.gameBoard[7];
+       if(middleCol.match(/xxx|ooo/)) {
+         this.setState({winner: this.state.turn});
+         return;
+       }
+
+       let rightCol = this.state.gameBoard[2] + this.state.gameBoard[5] + this.state.gameBoard[8];
+       if(rightCol.match(/xxx|ooo/)) {
+         this.setState({winner: this.state.turn});
+         return;
+       }
+
+       let leftDiag = this.state.gameBoard[0] + this.state.gameBoard[4] + this.state.gameBoard[8];
+       if(leftDiag.match(/xxx|ooo/)) {
+         this.setState({winner: this.state.turn});
+         return;
+       }
+
+       let rightDiag = this.state.gameBoard[2] + this.state.gameBoard[4] + this.state.gameBoard[6];
+       if(bottomRow.match(/xxx|ooo/)) {
+         this.setState({winner: this.state.turn});
+         return;
+       }
+       // After checking all the above possibilites for winning combinations, if there's no winner, that means we need to change over to the other player, i.e. the next turn. So, below we setState for current turn, based on the previous turn.
+       this.setState({turn: (this.state.turn === 'x') ? 'o' : 'x'});
+      }
+    }, this);
   }
-
 
   render() {
     return (
