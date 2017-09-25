@@ -14,7 +14,9 @@ export default class App extends Component {
         ' ', ' ', ' '
       ],
       winner: null,
-      turn: 'x'
+      turn: 'x',
+      maxPlayer: 'x',
+      minPlayer: 'o'
     }
   }
 
@@ -26,7 +28,9 @@ export default class App extends Component {
         ' ', ' ', ' '
       ],
       winner: null,
-      turn: 'x'
+      turn: 'x',
+      maxPlayer: 'x',
+      minPlayer: 'o'
     })
   }
 
@@ -53,7 +57,7 @@ export default class App extends Component {
       // We are joining all the elements of the array with no delimiters (so just back to back to back), and then replace any empty space with nothing (the single quotes with no space in between). What this gives is then - the length of moves will become the no of plays that has been played so far.
       console.log('Moves:', moves, 'Winner:', this.state.winner);
       if(moves.length === 9) {
-        this.setState({winner: 'd'});
+        this.setState({winner: 'Draw'});
         // i.e. if all the tiles are filled its a draw. Make the game over component visible.
         return;
       } else {
